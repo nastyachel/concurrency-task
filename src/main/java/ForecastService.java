@@ -78,7 +78,7 @@ public class ForecastService {
         thread.start();
     }
 
-    private void printForecastResult(String apiServiceName, String city, String description, double temerature, double wind, double humidity, double pressure) {
+    private synchronized void printForecastResult(String apiServiceName, String city, String description, double temerature, double wind, double humidity, double pressure) {
         System.out.println(apiServiceName + ": " + city);
         System.out.println("description: " + description);
         System.out.println("temperature: " + temerature + Const.ForecastMeasures.TEMPERATURE);
