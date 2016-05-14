@@ -9,7 +9,7 @@ import retrofit2.http.Query;
 public interface ForecastApi {
 
     @GET(Const.OwmApiSettings.URL+Const.OwmApiSettings.DATA+Const.OwmApiSettings.VERSION+Const.OwmApiSettings.WEATHER)
-    public Call<Weather> loadForecast(@Query(Const.OwmApiSettings.ID) String id, @Query(Const.OwmApiSettings.APP_ID) String apiKey);
+    Call<Weather> loadForecast(@Query(Const.OwmApiSettings.QUERY) String q,
+                                      @Query(Const.OwmApiSettings.APP_ID) String apiKey,
+                                      @Query(Const.OwmApiSettings.UNITS) String units);
 }
-
-//http://api.openweathermap.org/data/2.5/forecast/city?id=524901&APPID={APIKEY}

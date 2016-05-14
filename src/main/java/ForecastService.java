@@ -34,7 +34,7 @@ public class ForecastService {
 
     public void getOwmForecast() {
 
-        Call<Weather> forecastCall = forecastApi.loadForecast(Const.OwmApiSettings.CITY_ID, Const.OwmApiSettings.OWM_API_KEY);
+        Call<Weather> forecastCall = forecastApi.loadForecast(Const.CITY_NAME, Const.OwmApiSettings.OWM_API_KEY, Const.OwmApiSettings.UNITS_METRIC);
 
         Thread thread = new Thread() {
             @Override
