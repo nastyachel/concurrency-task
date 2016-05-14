@@ -28,13 +28,15 @@ public class Const {
 
     public class WwoApiSettings {
 
-        public static final String URL = "http://api.worldweatheronline.com/";
+        public static final String WWO_API_KEY = "9d44a297ae03427ab5811703161405";
+
+        public static final String URL = "http://api.worldweatheronline.com";
 
         public static final String PREMIUM = "/premium";
 
-        public static final String VERSION = "v1";
+        public static final String VERSION = "/v1";
 
-        public static final String WEATHER = "weather.ashx";
+        public static final String WEATHER = "/weather.ashx";
 
         public static final String KEY = "key";
 

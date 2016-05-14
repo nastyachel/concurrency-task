@@ -1,4 +1,3 @@
-import model.owm.Weather;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -15,7 +14,9 @@ public class ForecastService {
 
     private Retrofit wwoForecast;
 
-    private ForecastApi forecastApi;
+    private OwmForecastApi owmForecastApi;
+
+    private WwoForecastApi wwoForecastApi;
 
     public ForecastService() {
         setupRetrofit();
@@ -28,20 +29,27 @@ public class ForecastService {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        forecastApi = owmForecast.create(ForecastApi.class);
+        wwoForecast = new Retrofit.Builder()
+                .baseUrl(Const.WwoApiSettings.URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        owmForecastApi = owmForecast.create(OwmForecastApi.class);
+
+        wwoForecastApi = wwoForecast.create(WwoForecastApi.class);
 
     }
 
     public void getOwmForecast() {
 
-        Call<Weather> forecastCall = forecastApi.loadForecast(Const.CITY_NAME, Const.OwmApiSettings.OWM_API_KEY, Const.OwmApiSettings.UNITS_METRIC);
+        Call<model.owm.Weather> forecastCall = owmForecastApi.loadOpenWeatherMapForecast(Const.OwmApiSettings.OWM_API_KEY, Const.CITY_NAME, Const.OwmApiSettings.UNITS_METRIC);
 
         Thread thread = new Thread() {
             @Override
             public void run() {
                 try {
-                    Weather weather = forecastCall.execute().body();
-                    printForecastResult("OpenWeatherMap", weather.getCityName(), weather.getTemperature(), weather.getHumidity(), weather.getHumidity());
+                    model.owm.Weather weather = forecastCall.execute().body();
+                   printForecastResult("OpenWeatherMap", weather.getCityName(),weather.getDescription(), weather.getTemperature(), weather.getHumidity(), weather.getHumidity(), weather.getPressure());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -52,11 +60,31 @@ public class ForecastService {
 
     }
 
-    private void printForecastResult(String apiServiceName, String city, double temerature, double wind, double humidity){
-        System.out.println(apiServiceName+": "+city);
-        System.out.println("temperature: "+temerature+ Const.ForecastMeasures.TEMPERATURE);
-        System.out.println("wind: "+wind+Const.ForecastMeasures.WIND_SPEED);
-        System.out.println("humidity: "+humidity+Const.ForecastMeasures.HUMIDITY);
+    public void getWwoForecast(){
+        Call<model.wwo.Weather> forecastCall = wwoForecastApi.loadWorldWeatherOnlineForecast(Const.WwoApiSettings.WWO_API_KEY, Const.CITY_NAME, Const.WwoApiSettings.FORMAT_JSON);
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    model.wwo.Weather weather = forecastCall.execute().body();
+                    printForecastResult("WorldWeatherOnline", weather.getLocation(),weather.getDescription(), weather.getTemperature(), weather.getHumidity(), weather.getHumidity(), weather.getPressure());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        thread.start();
+    }
+
+    private void printForecastResult(String apiServiceName, String city, String description, double temerature, double wind, double humidity, double pressure) {
+        System.out.println(apiServiceName + ": " + city);
+        System.out.println("description: " + description);
+        System.out.println("temperature: " + temerature + Const.ForecastMeasures.TEMPERATURE);
+        System.out.println("wind: " + wind + Const.ForecastMeasures.WIND_SPEED);
+        System.out.println("humidity: " + humidity + Const.ForecastMeasures.HUMIDITY);
+        System.out.println("pressure: " + pressure + Const.ForecastMeasures.PRESSURE);
     }
 
 }

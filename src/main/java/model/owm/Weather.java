@@ -37,4 +37,9 @@ public class Weather {
     public String getCityName() {
         return cityName;
     }
+
+    public String getDescription() {
+        return weather.get(0).getDescription();
+    }
+
 }
