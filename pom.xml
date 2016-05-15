@@ -8,13 +8,6 @@
     <artifactId>concurrency-task</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <properties>
-        <java.version>1.8</java.version>
-        <spring-core.version>4.2.5.RELEASE</spring-core.version>
-        <junit.version>4.12</junit.version>
-        <plugin.compiler.version>3.5.1</plugin.compiler.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -38,17 +31,4 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${plugin.compiler.version}</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
