@@ -1,3 +1,5 @@
+package constants;
+
 /**
  * Created by nastya on 13.05.16.
  */

@@ -1,4 +1,4 @@
-import retrofit2.Retrofit;
+import service.ForecastService;
 
 /**
  * Created by nastya on 12.05.16.

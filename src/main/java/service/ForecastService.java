@@ -1,6 +1,11 @@
+package service;
+
+import api.OwmForecastApi;
+import api.WwoForecastApi;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import constants.Const;
 
 import java.io.IOException;
 
@@ -42,7 +47,7 @@ public class ForecastService {
 
     public void getOwmForecast() {
 
-        Call<model.owm.Weather> forecastCall = owmForecastApi.loadOpenWeatherMapForecast(Const.OwmApiSettings.OWM_API_KEY, Const.CITY_NAME, Const.OwmApiSettings.UNITS_METRIC);
+        final Call<model.owm.Weather> forecastCall = owmForecastApi.loadOpenWeatherMapForecast(Const.OwmApiSettings.OWM_API_KEY, Const.CITY_NAME, Const.OwmApiSettings.UNITS_METRIC);
 
         Thread thread = new Thread() {
             @Override
@@ -61,7 +66,7 @@ public class ForecastService {
     }
 
     public void getWwoForecast(){
-        Call<model.wwo.Weather> forecastCall = wwoForecastApi.loadWorldWeatherOnlineForecast(Const.WwoApiSettings.WWO_API_KEY, Const.CITY_NAME, Const.WwoApiSettings.FORMAT_JSON);
+       final  Call<model.wwo.Weather> forecastCall = wwoForecastApi.loadWorldWeatherOnlineForecast(Const.WwoApiSettings.WWO_API_KEY, Const.CITY_NAME, Const.WwoApiSettings.FORMAT_JSON);
 
         Thread thread = new Thread() {
             @Override

@@ -1,3 +1,6 @@
+package api;
+
+import constants.Const;
 import model.owm.Weather;
 import retrofit2.Call;
 import retrofit2.http.GET;
