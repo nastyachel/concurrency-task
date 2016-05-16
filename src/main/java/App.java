@@ -7,7 +7,6 @@ public class App {
 
     public static void main(String[] args) {
         ForecastService service = new ForecastService();
-        // TODO call tha weather rest
         service.getWwoForecast();
         service.getOwmForecast();
     }

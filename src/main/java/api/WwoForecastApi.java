@@ -16,4 +16,3 @@ public interface WwoForecastApi {
                                                  @Query(Const.WwoApiSettings.QUERY) String query,
                                                  @Query(Const.WwoApiSettings.FORMAT) String format);
 }
-//http://api.worldweatheronline.com/premium/v1/weather.ashx?key=9d44a297ae03427ab5811703161405&q=Dnipropetrovsk&format=json

@@ -15,9 +15,9 @@ import java.io.IOException;
  */
 public class ForecastService {
 
-    private Retrofit owmForecast;
+    private Retrofit owmForecastAdapter;
 
-    private Retrofit wwoForecast;
+    private Retrofit wwoForecastAdapter;
 
     private OwmForecastApi owmForecastApi;
 
@@ -29,19 +29,19 @@ public class ForecastService {
 
     private void setupRetrofit() {
 
-        owmForecast = new Retrofit.Builder()
+        owmForecastAdapter = new Retrofit.Builder()
                 .baseUrl(Const.OwmApiSettings.URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        wwoForecast = new Retrofit.Builder()
+        wwoForecastAdapter = new Retrofit.Builder()
                 .baseUrl(Const.WwoApiSettings.URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        owmForecastApi = owmForecast.create(OwmForecastApi.class);
+        owmForecastApi = owmForecastAdapter.create(OwmForecastApi.class);
 
-        wwoForecastApi = wwoForecast.create(WwoForecastApi.class);
+        wwoForecastApi = wwoForecastAdapter.create(WwoForecastApi.class);
 
     }
 
