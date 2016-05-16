@@ -7,7 +7,6 @@ public class App {
 
     public static void main(String[] args) {
         ForecastService service = new ForecastService();
-        service.getWwoForecast();
-        service.getOwmForecast();
+        service.getForecast();
     }
 }

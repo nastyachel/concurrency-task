@@ -2,12 +2,17 @@ package service;
 
 import api.OwmForecastApi;
 import api.WwoForecastApi;
+import callable.OwmForecastCollable;
+import callable.WwoForecastCallable;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import constants.Const;
 
-import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 
 /**
@@ -45,42 +50,26 @@ public class ForecastService {
 
     }
 
-    public void getOwmForecast() {
+    public void getForecast(){
+        final  Call<model.wwo.Weather> forecastCallWwo = wwoForecastApi.loadWorldWeatherOnlineForecast(Const.WwoApiSettings.WWO_API_KEY, Const.CITY_NAME, Const.WwoApiSettings.FORMAT_JSON);
+        final Call<model.owm.Weather> forecastCallOwm = owmForecastApi.loadOpenWeatherMapForecast(Const.OwmApiSettings.OWM_API_KEY, Const.CITY_NAME, Const.OwmApiSettings.UNITS_METRIC);
 
-        final Call<model.owm.Weather> forecastCall = owmForecastApi.loadOpenWeatherMapForecast(Const.OwmApiSettings.OWM_API_KEY, Const.CITY_NAME, Const.OwmApiSettings.UNITS_METRIC);
+        ExecutorService pool = Executors.newFixedThreadPool(2);
 
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    model.owm.Weather weather = forecastCall.execute().body();
-                   printForecastResult("OpenWeatherMap", weather.getCityName(),weather.getDescription(), weather.getTemperature(), weather.getHumidity(), weather.getHumidity(), weather.getPressure());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
+        Future<model.wwo.Weather> futureWwo = pool.submit(new WwoForecastCallable(forecastCallWwo));
+        Future<model.owm.Weather> futureOwm = pool.submit(new OwmForecastCollable(forecastCallOwm));
 
-        thread.start();
+        try {
+            model.wwo.Weather weatherWwo = futureWwo.get();
+            model.owm.Weather weatherOwm = futureOwm.get();
+            printForecastResult("OpenWeatherMap", weatherOwm.getCityName(),weatherOwm.getDescription(), weatherOwm.getTemperature(), weatherOwm.getHumidity(), weatherOwm.getHumidity(), weatherOwm.getPressure());
+            printForecastResult("WorldWeatherOnline", weatherWwo.getLocation(),weatherWwo.getDescription(), weatherWwo.getTemperature(), weatherWwo.getHumidity(), weatherWwo.getHumidity(), weatherWwo.getPressure());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
 
-    }
-
-    public void getWwoForecast(){
-       final  Call<model.wwo.Weather> forecastCall = wwoForecastApi.loadWorldWeatherOnlineForecast(Const.WwoApiSettings.WWO_API_KEY, Const.CITY_NAME, Const.WwoApiSettings.FORMAT_JSON);
-
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    model.wwo.Weather weather = forecastCall.execute().body();
-                    printForecastResult("WorldWeatherOnline", weather.getLocation(),weather.getDescription(), weather.getTemperature(), weather.getHumidity(), weather.getHumidity(), weather.getPressure());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        thread.start();
     }
 
     private synchronized void printForecastResult(String apiServiceName, String city, String description, double temerature, double wind, double humidity, double pressure) {
