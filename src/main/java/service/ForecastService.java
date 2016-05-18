@@ -2,8 +2,9 @@ package service;
 
 import api.OwmForecastApi;
 import api.WwoForecastApi;
-import callable.OwmForecastCollable;
+import callable.OwmForecastCallable;
 import callable.WwoForecastCallable;
+import model.ForecastResult;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -13,6 +14,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import static java.lang.Thread.sleep;
 
 
 /**
@@ -50,29 +53,30 @@ public class ForecastService {
 
     }
 
-    public void getForecast(){
-        final  Call<model.wwo.Weather> forecastCallWwo = wwoForecastApi.loadWorldWeatherOnlineForecast(Const.WwoApiSettings.WWO_API_KEY, Const.CITY_NAME, Const.WwoApiSettings.FORMAT_JSON);
+    public ForecastResult getForecast() {
+
+        ForecastResult forecastResult = new ForecastResult();
+
+        final Call<model.wwo.Weather> forecastCallWwo = wwoForecastApi.loadWorldWeatherOnlineForecast(Const.WwoApiSettings.WWO_API_KEY, Const.CITY_NAME, Const.WwoApiSettings.FORMAT_JSON);
         final Call<model.owm.Weather> forecastCallOwm = owmForecastApi.loadOpenWeatherMapForecast(Const.OwmApiSettings.OWM_API_KEY, Const.CITY_NAME, Const.OwmApiSettings.UNITS_METRIC);
 
         ExecutorService pool = Executors.newFixedThreadPool(2);
 
         Future<model.wwo.Weather> futureWwo = pool.submit(new WwoForecastCallable(forecastCallWwo));
-        Future<model.owm.Weather> futureOwm = pool.submit(new OwmForecastCollable(forecastCallOwm));
+        Future<model.owm.Weather> futureOwm = pool.submit(new OwmForecastCallable(forecastCallOwm));
 
         try {
-            model.wwo.Weather weatherWwo = futureWwo.get();
-            model.owm.Weather weatherOwm = futureOwm.get();
-            printForecastResult("OpenWeatherMap", weatherOwm.getCityName(),weatherOwm.getDescription(), weatherOwm.getTemperature(), weatherOwm.getHumidity(), weatherOwm.getHumidity(), weatherOwm.getPressure());
-            printForecastResult("WorldWeatherOnline", weatherWwo.getLocation(),weatherWwo.getDescription(), weatherWwo.getTemperature(), weatherWwo.getHumidity(), weatherWwo.getHumidity(), weatherWwo.getPressure());
+            forecastResult.setForecastOpenWeatherMap(futureOwm.get());
+            forecastResult.setForecastWorldWeatherOnline(futureWwo.get());
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
+        return forecastResult;
     }
 
-    private synchronized void printForecastResult(String apiServiceName, String city, String description, double temerature, double wind, double humidity, double pressure) {
+    public synchronized void printForecastResult(String apiServiceName, String city, String description, double temerature, double wind, double humidity, double pressure) {
         System.out.println(apiServiceName + ": " + city);
         System.out.println("description: " + description);
         System.out.println("temperature: " + temerature + Const.ForecastMeasures.TEMPERATURE);

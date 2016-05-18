@@ -9,11 +9,11 @@ import java.util.concurrent.Callable;
 /**
  * Created by nastya on 16.05.16.
  */
-public class OwmForecastCollable implements Callable {
+public class OwmForecastCallable implements Callable {
 
     Call<Weather> call;
 
-    public OwmForecastCollable(Call<Weather> call){
+    public OwmForecastCallable(Call<Weather> call){
         this.call = call;
     }
 

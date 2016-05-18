@@ -20,6 +20,7 @@ public class WwoForecastCallable implements Callable {
     public Weather call(){
         try {
             Weather weather = call.execute().body();
+
             return weather;
         } catch (IOException e) {
             e.printStackTrace();
